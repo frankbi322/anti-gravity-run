@@ -55,6 +55,11 @@
 	document.addEventListener("DOMContentLoaded", function () {
 	  var canvas = document.getElementById("canvas");
 	  var stage = new createjs.Stage(canvas);
+	
+	  //
+	  // let newGame = document.getElementById("newGame");
+	  // newGame.addEventListener("click",new Game(canvas, stage));
+	
 	  new _game2.default(canvas, stage);
 	});
 
@@ -68,11 +73,8 @@
 	  value: true
 	});
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // import Start from './start';
 	
-	var _start = __webpack_require__(2);
-	
-	var _start2 = _interopRequireDefault(_start);
 	
 	var _pause = __webpack_require__(3);
 	
@@ -94,7 +96,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	// import Snow from './snow';
+	// import Background from './background';
 	
 	var Game = function () {
 	  function Game(canvas, stage) {
@@ -104,63 +106,96 @@
 	
 	    this.gravity = 1;
 	    this.play = true;
+	    this.score = 0;
+	    this.displayScore = new createjs.Text('Score:  ' + this.score, "30px Arial", "blue");
+	    this.displayScore.x = 650;
+	    this.displayScore.y = 30;
+	    stage.addChild(this.displayScore);
+	    this.speed = 0;
 	    window.stage = stage;
 	    window.height = canvas.height;
 	    window.width = canvas.width;
+	    // const img = new Image();
+	    // img.src = "assets/background.jpg";
+	    // img.onload = function () {
+	    //   const bitmap = new createjs.Bitmap(img);
+	    //   bitmap.x = 0;
+	    //   bitmap.y = 0;
+	    //   bitmap.name = "background";
+	    //   stage.addChild(bitmap);
+	    //   stage.update();
+	    // };
 	    this.player = new _player2.default(stage);
 	    this.player.startPosition();
 	    this.obstacle = new _obstacle2.default(stage);
 	    this.obstacle.populateObstacles();
+	
 	    createjs.Ticker.setFPS(30);
 	    createjs.Ticker.on("tick", function () {
 	      return _this.handleTick();
 	    });
 	    this.pause = this.pause.bind(this);
+	    setInterval(this.updateScore.bind(this), 500);
+	
 	    document.addEventListener("keydown", this.keyDown.bind(this));
 	    document.addEventListener("keyup", this.keyUp.bind(this));
 	    (0, _pause2.default)(function () {
 	      return _this.pause();
 	    });
-	    (0, _start2.default)(function () {
-	      return _this.play();
-	    }, stage);
+	    // Start(() => this.play(), stage);
 	    this.isPlaying = true;
 	  }
 	
 	  _createClass(Game, [{
 	    key: 'handleTick',
 	    value: function handleTick(e) {
+	
 	      if (this.play == true) if (!createjs.Ticker.getPaused()) {
 	        this.player.move(this.gravity);
 	        this.obstacle.move();
-	        // debugger
 	        if (this.player.leaveBounds()) {
-	          // debugger;
 	          this.gameOver();
 	        }
 	        if (this.collidesWith()) {
-	          debugger;
 	          this.gameOver();
 	        }
 	        stage.update();
 	      }
 	    }
 	  }, {
-	    key: 'play',
-	    value: function play() {
-	      var _this2 = this;
-	
-	      stage.removeAllChildren();
-	      (0, _pause2.default)(function () {
-	        return _this2.pause();
-	      });
-	      this.player.startPosition();
-	      this.obstacle.populateObstacles();
-	      createjs.Ticker.setFPS(60);
-	      createjs.Ticker.on("tick", function (e) {
-	        return _this2.handleTick(e);
-	      });
+	    key: 'restartGame',
+	    value: function restartGame() {
+	      window.location.reload();
 	    }
+	  }, {
+	    key: 'updateScore',
+	    value: function updateScore() {
+	      if (this.play) {
+	        stage.removeChild(this.displayScore);
+	        this.score += 1;
+	        var nextScore = new createjs.Text('Score:  ' + this.score, "30px Arial", "blue");
+	        this.displayScore = nextScore;
+	        nextScore.x = 650;
+	        nextScore.y = 30;
+	        stage.addChild(nextScore);
+	        stage.update();
+	      }
+	    }
+	  }, {
+	    key: 'updateSpeed',
+	    value: function updateSpeed() {
+	      this.speed += 1;
+	    }
+	
+	    // play() {
+	    //   stage.removeAllChildren();
+	    //   Pause(() => this.pause());
+	    //   this.player.startPosition();
+	    //   this.obstacle.populateObstacles();
+	    //   createjs.Ticker.setFPS(60);
+	    //   createjs.Ticker.on("tick", e => this.handleTick(e));
+	    // }
+	
 	  }, {
 	    key: 'pause',
 	    value: function pause() {
@@ -172,14 +207,12 @@
 	    key: 'keyDown',
 	    value: function keyDown(e) {
 	      var keycode = e.which || window.event.keycode;
-	      // console.log(keycode);
 	      if (keycode == 32) {
 	        e.preventDefault();
 	        this.gravity = -this.gravity;
 	      }
 	      if (keycode == "A".charCodeAt(0)) {
 	        e.preventDefault();
-	        // console.log("a");
 	        this.pause();
 	      }
 	    }
@@ -192,7 +225,16 @@
 	    key: 'gameOver',
 	    value: function gameOver() {
 	      this.play = false;
+	      var lose = new createjs.Text("Game Over!\n\n", "40px Arial", "red");
+	      lose.text += 'You scored ' + this.score + ' points!\n\n';
+	      lose.textAlign = "center";
+	      lose.x = 400;
+	      lose.y = 200;
+	      stage.addChild(lose);
 	      stage.update();
+	      var replay = document.getElementById("replay");
+	      replay.className = "replay";
+	      replay.addEventListener("click", this.restartGame);
 	    }
 	  }, {
 	    key: 'collidesWith',
@@ -201,7 +243,6 @@
 	      // let collides = false;
 	      var obstacles = this.obstacle.obstacles.children;
 	      for (var i = 0; i < obstacles.length; i++) {
-	        console.log(obstacles.length);
 	        if (i == 0) {
 	          xOffset = 400;
 	        } else if (i == 1) {
@@ -211,11 +252,11 @@
 	        }
 	
 	        if (this.player.player.localToGlobal(0, 0).x >= obstacles[i].localToGlobal(0, 0).x + obstacles[i].width + xOffset || this.player.player.localToGlobal(0, 0).x + this.player.player.width <= obstacles[i].localToGlobal(0, 0).x + xOffset || this.player.player.localToGlobal(0, 0).y >= obstacles[i].localToGlobal(0, 0).y * 2 + obstacles[i].height - 20 || this.player.player.localToGlobal(0, 0).y + this.player.player.height <= obstacles[i].localToGlobal(0, 0).y * 2) {
-	          console.log(xOffset);
+	          // console.log(xOffset);
 	          // collides = false;
 	        } else {
-	          console.log("player x,y: ", this.player.player.localToGlobal(0, 0).x, this.player.player.localToGlobal(0, 0).y);
-	          console.log("obstacle x,y: ", obstacles[i].localToGlobal(0, 0).x, obstacles[i].localToGlobal(0, 0).y, obstacles[i].height);
+	          // console.log("player x,y: ", this.player.player.localToGlobal(0,0).x, this.player.player.localToGlobal(0,0).y);
+	          // console.log("obstacle x,y: ", obstacles[i].localToGlobal(0,0).x, obstacles[i].localToGlobal(0,0).y, obstacles[i].height);
 	          return true;
 	        }
 	
@@ -242,62 +283,7 @@
 	exports.default = Game;
 
 /***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var Start = function Start(play, stage) {
-	  // const image = new Image();
-	  // image.src = "./assets/images/background.png";
-	  //
-	  // image.onload = function() {
-	  //   const bitmap = new createjs.Bitmap(image);
-	  //   bitmap.x = 0;
-	  //   bitmap.y = 0;
-	  //   bitmap.name = "background";
-	  //   stage.addChild(bitmap);
-	  //   addButton();
-	  //   stage.update();
-	  // };
-	
-	  var addButton = function addButton() {
-	    var welcomeText = new createjs.Text("Get Ready!", "bold 36px Arial", "#fff");
-	    welcomeText.textAlign = "center";
-	    welcomeText.x = width / 2;
-	    welcomeText.y = 150;
-	
-	    var background = new createjs.Shape();
-	    background.name = "background";
-	    background.graphics.beginFill("lightgray").drawRoundRect(0, 0, 150, 60, 10);
-	
-	    var label = new createjs.Text("start", "50px Arial");
-	    label.name = "label";
-	    label.textAlign = "center";
-	    label.textBaseline = "middle";
-	    label.x = 150 / 2;
-	    label.y = 60 / 2;
-	
-	    var button = new createjs.Container();
-	    button.name = "button";
-	    button.x = width / 3;
-	    button.y = height / 2;
-	
-	    button.addChild(background, label);
-	    button.on("click", function () {
-	      return play();
-	    });
-	
-	    stage.addChild(button, welcomeText);
-	  };
-	};
-	
-	exports.default = Start;
-
-/***/ },
+/* 2 */,
 /* 3 */
 /***/ function(module, exports) {
 
@@ -416,7 +402,7 @@
 	      obstacle.y = Math.random() * 3 * 100;
 	      obstacle.width = 100;
 	      obstacle.height = Math.ceil(Math.random() * 4) * 100;
-	      obstacle.graphics.beginFill("black").drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+	      obstacle.graphics.beginFill("gray").drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 	      this.obstacles.addChild(obstacle);
 	    }
 	  }]);

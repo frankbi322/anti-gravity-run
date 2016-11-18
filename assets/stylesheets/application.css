@@ -1,4 +1,4 @@
-* {
+body {
   margin: 0;
   padding: 0;
   border: 0;
@@ -7,20 +7,65 @@
   font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+  position: relative;
 }
 
 
 .container {
+
   padding: 5px;
   display: flex;
   flex-direction: column;
   text-align: center;
   background: #6b92b9;
   margin: 0;
+  position: relative;
+}
+
+
+
+
+.replay{
+  z-index: 1000;
+  position: absolute;
+  margin: 0 auto;
+  top: 66%;
+  font-size: 40px;
+  color: red;
+  left: 0;
+  right: 0;
+}
+
+.start{
+  z-index: 1000;
+  position: absolute;
+  margin: 0 auto;
+  top: 66%;
+  font-size: 40px;
+  color: red;
+  left: 0;
+  right: 0;
+}
+
+#replay:hover{
+  color: gray;
+  cursor: pointer;
 }
 
 #canvas {
   margin: 20px auto;
   display: block;
-  background: white;
+  background-image: url('../space.png');
+}
+
+.hidden {
+  display: none;
+}
+
+.gameover{
+
+}
+
+.button:hover{
+  cursor: pointer;
 }
