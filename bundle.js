@@ -115,9 +115,12 @@
 	    createjs.Ticker.on("tick", function () {
 	      return _this.handleTick();
 	    });
+	    this.pause = this.pause.bind(this);
 	    document.addEventListener("keydown", this.keyDown.bind(this));
 	    document.addEventListener("keyup", this.keyUp.bind(this));
-	
+	    (0, _pause2.default)(function () {
+	      return _this.pause();
+	    });
 	    (0, _start2.default)(function () {
 	      return _this.play();
 	    }, stage);
@@ -136,7 +139,7 @@
 	          this.gameOver();
 	        }
 	        if (this.collidesWith()) {
-	          // debugger
+	          debugger;
 	          this.gameOver();
 	        }
 	        stage.update();
@@ -163,15 +166,21 @@
 	    value: function pause() {
 	      var paused = !createjs.Ticker.getPaused();
 	      createjs.Ticker.setPaused(paused);
+	      debugger;
 	    }
 	  }, {
 	    key: 'keyDown',
 	    value: function keyDown(e) {
 	      var keycode = e.which || window.event.keycode;
-	
+	      // console.log(keycode);
 	      if (keycode == 32) {
 	        e.preventDefault();
 	        this.gravity = -this.gravity;
+	      }
+	      if (keycode == "A".charCodeAt(0)) {
+	        e.preventDefault();
+	        // console.log("a");
+	        this.pause();
 	      }
 	    }
 	  }, {
@@ -188,16 +197,38 @@
 	  }, {
 	    key: 'collidesWith',
 	    value: function collidesWith() {
-	      // let obstacles = stage.getChildByName("obstacles").children;
-	      //   // debugger;
-	      // for (let i = 0; i<obstacles.length; i++) {
-	      if (this.player.player.x >= this.obstacle.obstacles.x + this.obstacle.obstacles.children[0].width - 110 || this.player.player.x + this.player.player.width <= this.obstacle.obstacles.x - 110 || this.player.player.y >= this.obstacle.obstacles.y + this.obstacle.obstacles.children[0].height - 18 || this.player.player.y + this.player.player.height <= this.obstacle.obstacles.y - 20) {
-	        return false;
+	      var xOffset = void 0;
+	      // let collides = false;
+	      var obstacles = this.obstacle.obstacles.children;
+	      for (var i = 0; i < obstacles.length; i++) {
+	        console.log(obstacles.length);
+	        if (i == 0) {
+	          xOffset = 400;
+	        } else if (i == 1) {
+	          xOffset = 700;
+	        } else if (i == 2) {
+	          xOffset = 1000;
+	        }
+	
+	        if (this.player.player.localToGlobal(0, 0).x >= obstacles[i].localToGlobal(0, 0).x + obstacles[i].width + xOffset || this.player.player.localToGlobal(0, 0).x + this.player.player.width <= obstacles[i].localToGlobal(0, 0).x + xOffset || this.player.player.localToGlobal(0, 0).y >= obstacles[i].localToGlobal(0, 0).y * 2 + obstacles[i].height - 20 || this.player.player.localToGlobal(0, 0).y + this.player.player.height <= obstacles[i].localToGlobal(0, 0).y * 2) {
+	          console.log(xOffset);
+	          // collides = false;
+	        } else {
+	          console.log("player x,y: ", this.player.player.localToGlobal(0, 0).x, this.player.player.localToGlobal(0, 0).y);
+	          console.log("obstacle x,y: ", obstacles[i].localToGlobal(0, 0).x, obstacles[i].localToGlobal(0, 0).y, obstacles[i].height);
+	          return true;
+	        }
+	
+	        // if ( this.player.player.x >= this.obstacle.obstacles.x + this.obstacle.obstacles.children[0].width -110||
+	        //      this.player.player.x + this.player.player.width <= this.obstacle.obstacles.x -110 ||
+	        //      this.player.player.y >= this.obstacle.obstacles.y + this.obstacle.obstacles.children[0].height -18 ||
+	        //      this.player.player.y + this.player.player.height <= this.obstacle.obstacles.y -20) {
+	        //     return false;
+	        //   }
+	        //     console.log("player x,y: ", this.player.player.x, this.player.player.y);
+	        //     console.log("obstacle x,y: ", this.obstacle.obstacles.x, this.obstacle.obstacles.y);
+	        //     return true;
 	      }
-	      console.log("player x,y: ", this.player.player.x, this.player.player.y);
-	      console.log("obstacle x,y: ", this.obstacle.obstacles.x, this.obstacle.obstacles.y);
-	      return true;
-	      // }
 	    }
 	  }]);
 	
@@ -345,17 +376,19 @@
 	
 	      this.obstacles = new createjs.Container();
 	      this.obstacles.name = "obstacles";
-	      this.obstacles.x = 800;
-	      this.obstacles.y = Math.random() * 4 * 100;
-	      // this.createObstacle();
-	      var obstacle = new createjs.Shape();
-	      obstacle.x = 0;
-	      obstacle.y = 0;
-	      obstacle.width = 100;
-	      obstacle.height = Math.random() * 4 * 100;
-	      obstacle.graphics.beginFill("black").drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+	      this.obstacles.x = 0;
+	      this.obstacles.y = 0;
+	      this.createObstacle(500);
+	      this.createObstacle(800);
+	      this.createObstacle(1100);
+	      // let obstacle = new createjs.Shape();
+	      // obstacle.x = 0;
+	      // obstacle.y = 0;
+	      // obstacle.width = 100;
+	      // obstacle.height = Math.random() * 4 * 100;
+	      // obstacle.graphics.beginFill("black").drawRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
 	      // debugger
-	      this.obstacles.addChild(obstacle);
+	      // this.obstacles.addChild(obstacle);
 	      this.stage.addChild(this.obstacles);
 	    }
 	  }, {
@@ -371,18 +404,18 @@
 	
 	      var obstacles = this.obstacles.children;
 	
-	      if (this.obstacles.x < 0) {
+	      if (this.obstacles.x + 2300 < 0) {
 	        this.reset();
 	      }
 	    }
 	  }, {
 	    key: "createObstacle",
-	    value: function createObstacle() {
+	    value: function createObstacle(x) {
 	      var obstacle = new createjs.Shape();
-	      obstacle.x = 0;
+	      obstacle.x = x;
 	      obstacle.y = Math.random() * 3 * 100;
-	      obstacle.width = 50;
-	      obstacle.height = Math.random() * 4 * 100;
+	      obstacle.width = 100;
+	      obstacle.height = Math.ceil(Math.random() * 4) * 100;
 	      obstacle.graphics.beginFill("black").drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 	      this.obstacles.addChild(obstacle);
 	    }

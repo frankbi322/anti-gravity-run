@@ -1,0 +1,4 @@
+canvas =
+ctx.drawImage(url,0,0)
+ctx.drawImage(url,0,0,0,0)
+ctx.drawImage(url,0,0,0,0,0,0,0,0)
