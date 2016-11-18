@@ -149,7 +149,7 @@
 	      if (this.playing == true) if (!createjs.Ticker.getPaused()) {
 	        this.player.move(this.gravity);
 	        this.obstacle.move(this.speed);
-	        console.log(this.player.player.y);
+	        // console.log(this.player.player.y);
 	        if (this.player.leaveBounds()) {
 	          this.gameOver();
 	        }
