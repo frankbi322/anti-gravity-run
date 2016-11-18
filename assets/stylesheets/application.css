@@ -77,3 +77,7 @@ body {
     justify-content: space-around;
     margin: 20px auto;
 }
+
+.rotated{
+    transform: rotateX(180deg);
+}
