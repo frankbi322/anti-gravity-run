@@ -5,7 +5,7 @@ body {
   outline: 0;
   background: transparent;
   font-size: 100%;
-	font: inherit;
+	font: arial;
 	vertical-align: baseline;
   position: relative;
 }
@@ -17,6 +17,7 @@ body {
   display: flex;
   flex-direction: column;
   text-align: center;
+  align-items: center;
   background: #6b92b9;
   margin: 0;
   position: relative;
@@ -71,11 +72,11 @@ body {
 }
 
 .icons {
-    width: 500px;
     color: white;
     display: flex;
+    align-content: center;
     justify-content: space-around;
-    margin: 20px auto;
+    width: 800px;
 }
 
 .rotated{
