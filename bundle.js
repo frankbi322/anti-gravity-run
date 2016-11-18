@@ -107,24 +107,15 @@
 	    this.gravity = 1;
 	    this.play = true;
 	    this.score = 0;
-	    this.displayScore = new createjs.Text('Score:  ' + this.score, "30px Arial", "blue");
-	    this.displayScore.x = 650;
+	    this.displayScore = new createjs.Text('Score:  ' + this.score, "30px Arial", "white");
+	    this.displayScore.x = 625;
 	    this.displayScore.y = 30;
 	    stage.addChild(this.displayScore);
-	    this.speed = 0;
+	    this.speed = 10;
 	    window.stage = stage;
 	    window.height = canvas.height;
 	    window.width = canvas.width;
-	    // const img = new Image();
-	    // img.src = "assets/background.jpg";
-	    // img.onload = function () {
-	    //   const bitmap = new createjs.Bitmap(img);
-	    //   bitmap.x = 0;
-	    //   bitmap.y = 0;
-	    //   bitmap.name = "background";
-	    //   stage.addChild(bitmap);
-	    //   stage.update();
-	    // };
+	
 	    this.player = new _player2.default(stage);
 	    this.player.startPosition();
 	    this.obstacle = new _obstacle2.default(stage);
@@ -136,7 +127,7 @@
 	    });
 	    this.pause = this.pause.bind(this);
 	    setInterval(this.updateScore.bind(this), 500);
-	
+	    setInterval(this.updateSpeed.bind(this), 5000);
 	    document.addEventListener("keydown", this.keyDown.bind(this));
 	    document.addEventListener("keyup", this.keyUp.bind(this));
 	    (0, _pause2.default)(function () {
@@ -152,11 +143,12 @@
 	
 	      if (this.play == true) if (!createjs.Ticker.getPaused()) {
 	        this.player.move(this.gravity);
-	        this.obstacle.move();
+	        this.obstacle.move(this.speed);
 	        if (this.player.leaveBounds()) {
 	          this.gameOver();
 	        }
 	        if (this.collidesWith()) {
+	          debugger;
 	          this.gameOver();
 	        }
 	        stage.update();
@@ -172,10 +164,10 @@
 	    value: function updateScore() {
 	      if (this.play) {
 	        stage.removeChild(this.displayScore);
-	        this.score += 1;
-	        var nextScore = new createjs.Text('Score:  ' + this.score, "30px Arial", "blue");
+	        this.score += this.speed;
+	        var nextScore = new createjs.Text('Score:  ' + this.score, "30px Arial", "white");
 	        this.displayScore = nextScore;
-	        nextScore.x = 650;
+	        nextScore.x = 625;
 	        nextScore.y = 30;
 	        stage.addChild(nextScore);
 	        stage.update();
@@ -184,7 +176,7 @@
 	  }, {
 	    key: 'updateSpeed',
 	    value: function updateSpeed() {
-	      this.speed += 1;
+	      this.speed += 2;
 	    }
 	
 	    // play() {
@@ -201,7 +193,11 @@
 	    value: function pause() {
 	      var paused = !createjs.Ticker.getPaused();
 	      createjs.Ticker.setPaused(paused);
-	      debugger;
+	      if (this.play === true) {
+	        this.play = false;
+	      } else {
+	        this.play = true;
+	      }
 	    }
 	  }, {
 	    key: 'keyDown',
@@ -210,6 +206,7 @@
 	      if (keycode == 32) {
 	        e.preventDefault();
 	        this.gravity = -this.gravity;
+	        // this.player.player.class="rotated";
 	      }
 	      if (keycode == "A".charCodeAt(0)) {
 	        e.preventDefault();
@@ -225,7 +222,7 @@
 	    key: 'gameOver',
 	    value: function gameOver() {
 	      this.play = false;
-	      var lose = new createjs.Text("Game Over!\n\n", "40px Arial", "red");
+	      var lose = new createjs.Text("Game Over!\n\n", "40px Arial", "white");
 	      lose.text += 'You scored ' + this.score + ' points!\n\n';
 	      lose.textAlign = "center";
 	      lose.x = 400;
@@ -251,34 +248,16 @@
 	          xOffset = 1000;
 	        }
 	
-	        if (this.player.player.localToGlobal(0, 0).x >= obstacles[i].localToGlobal(0, 0).x + obstacles[i].width + xOffset || this.player.player.localToGlobal(0, 0).x + this.player.player.width <= obstacles[i].localToGlobal(0, 0).x + xOffset || this.player.player.localToGlobal(0, 0).y >= obstacles[i].localToGlobal(0, 0).y * 2 + obstacles[i].height - 20 || this.player.player.localToGlobal(0, 0).y + this.player.player.height <= obstacles[i].localToGlobal(0, 0).y * 2) {
-	          // console.log(xOffset);
-	          // collides = false;
-	        } else {
-	          // console.log("player x,y: ", this.player.player.localToGlobal(0,0).x, this.player.player.localToGlobal(0,0).y);
-	          // console.log("obstacle x,y: ", obstacles[i].localToGlobal(0,0).x, obstacles[i].localToGlobal(0,0).y, obstacles[i].height);
+	        if (this.player.player.localToGlobal(0, 0).x >= obstacles[i].localToGlobal(0, 0).x + obstacles[i].width + xOffset || this.player.player.localToGlobal(0, 0).x + this.player.player.width <= obstacles[i].localToGlobal(0, 0).x + xOffset || this.player.player.localToGlobal(0, 0).y >= obstacles[i].localToGlobal(0, 0).y * 2 + obstacles[i].height - 20 || this.player.player.localToGlobal(0, 0).y + this.player.player.height <= obstacles[i].localToGlobal(0, 0).y * 2) {} else {
+	
 	          return true;
 	        }
-	
-	        // if ( this.player.player.x >= this.obstacle.obstacles.x + this.obstacle.obstacles.children[0].width -110||
-	        //      this.player.player.x + this.player.player.width <= this.obstacle.obstacles.x -110 ||
-	        //      this.player.player.y >= this.obstacle.obstacles.y + this.obstacle.obstacles.children[0].height -18 ||
-	        //      this.player.player.y + this.player.player.height <= this.obstacle.obstacles.y -20) {
-	        //     return false;
-	        //   }
-	        //     console.log("player x,y: ", this.player.player.x, this.player.player.y);
-	        //     console.log("obstacle x,y: ", this.obstacle.obstacles.x, this.obstacle.obstacles.y);
-	        //     return true;
 	      }
 	    }
 	  }]);
 	
 	  return Game;
 	}();
-	
-	// let obstacles = stage.getChildbyName("obstacles").children;
-	// for (let i = 0; i<obstacles.length; i++)
-	
 	
 	exports.default = Game;
 
@@ -385,12 +364,12 @@
 	    }
 	  }, {
 	    key: "move",
-	    value: function move() {
-	      this.obstacles.x = this.obstacles.x - 10;
+	    value: function move(speed) {
+	      this.obstacles.x = this.obstacles.x - speed;
 	
 	      var obstacles = this.obstacles.children;
 	
-	      if (this.obstacles.x + 2300 < 0) {
+	      if (this.obstacles.x + 2500 < 0) {
 	        this.reset();
 	      }
 	    }
@@ -399,8 +378,8 @@
 	    value: function createObstacle(x) {
 	      var obstacle = new createjs.Shape();
 	      obstacle.x = x;
-	      obstacle.y = Math.random() * 3 * 100;
-	      obstacle.width = 100;
+	      obstacle.y = Math.ceil(Math.random() * 300);
+	      obstacle.width = Math.ceil(Math.random() * 3) * 100;
 	      obstacle.height = Math.ceil(Math.random() * 4) * 100;
 	      obstacle.graphics.beginFill("gray").drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 	      this.obstacles.addChild(obstacle);
@@ -436,14 +415,29 @@
 	  _createClass(Player, [{
 	    key: "startPosition",
 	    value: function startPosition() {
-	      this.player = new createjs.Shape();
-	      this.player.graphics.beginFill("green").drawRect(100, 20, 30, 30);
-	      this.player.x = 100;
-	      this.player.y = 20;
-	      this.player.width = 30;
-	      this.player.height = 30;
-	      this.stage.addChild(this.player);
+	      var _this = this;
+	
+	      var img = new Image();
+	      img.src = "assets/player.png";
+	      img.onload = function (event) {
+	        _this.player = new createjs.Bitmap('assets/player.png');
+	        _this.player.x = 100;
+	        _this.player.y = 100;
+	        _this.player.name = "player";
+	        _this.stage.addChild(_this.player);
+	      };
 	    }
+	
+	    // startPosition(){
+	    //   this.player = new createjs.Shape();
+	    //   this.player.graphics.beginFill("green").drawRect(100,20,30,30);
+	    //   this.player.x = 100;
+	    //   this.player.y = 20;
+	    //   this.player.width = 30;
+	    //   this.player.height = 30;
+	    //   this.stage.addChild(this.player);
+	    // }
+	
 	  }, {
 	    key: "move",
 	    value: function move(gravity) {
